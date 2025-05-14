@@ -9,7 +9,7 @@ public class ArmController : MonoBehaviour
     [SerializeField] private StickyNoteManager noteManager;
 
     private int activeHandCount = 1;
-    private float speedMultiplier = 1f;
+    private int speedMultiplier = 0;
     public void StartTearingSequence(Action onComplete)
     {
         int finishedCount = 0;
@@ -20,7 +20,7 @@ public class ArmController : MonoBehaviour
             Vector3 spawnPos = target.position + new Vector3(UnityEngine.Random.Range(-1f, 1f), 0f, 0f);
 
             arms[i].Init(target, noteManager);
-            arms[i].SetSpeedMultiplier(speedMultiplier);
+            arms[i].CalculateSpeedFor1NotePerSecond();
             arms[i].StartWorkLoop(() =>
             {
                 finishedCount++;
@@ -31,12 +31,29 @@ public class ArmController : MonoBehaviour
 
     }
 
-    public void UpdateSpeedMultiplier(float multiplier)
+    public void UpdateSpeedMultiplier(int multiplier)
     {
         speedMultiplier = multiplier;
         for(int i = 0;i < arms.Length; i++)
         {
-            arms[i].SetSpeedMultiplier(speedMultiplier);
+            arms[i].SetSpeedByLevel(speedMultiplier);
+        }
+
+    }
+
+    public void UpdateSpeedAutoClick(float duration)
+    {
+        for (int i = 0; i < arms.Length; i++)
+        {
+            arms[i].StartAutoBoost(duration);
+        }
+
+    }
+    public void UpdateSpeed(float duration)
+    {
+        for (int i = 0; i < arms.Length; i++)
+        {
+            arms[i].ActivateSpeedBoost(duration);
         }
 
     }
@@ -52,7 +69,7 @@ public class ArmController : MonoBehaviour
             {
                 arms[i].gameObject.SetActive(true);
                 arms[i].Init(target, noteManager);
-                arms[i].SetSpeedMultiplier(speedMultiplier);
+                arms[i].CalculateSpeedFor1NotePerSecond();
                 arms[i].StartWorkLoop(null);
             }
         }

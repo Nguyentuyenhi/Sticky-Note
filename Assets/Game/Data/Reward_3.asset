@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47be9f90d6c69974fbbf45d93fd6dd94, type: 3}
   m_Name: Reward_3
   m_EditorClassIdentifier: 
-  rewardName: +5 Hands
+  rewardName: Auto click
   icon: {fileID: 0}
   description: 
-  countDownTimer: 8
+  countDownTimer: 30
+  count: 0

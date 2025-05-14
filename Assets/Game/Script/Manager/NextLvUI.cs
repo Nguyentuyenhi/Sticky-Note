@@ -10,6 +10,7 @@ public class NextLvUI : MonoBehaviour
     public void OnClickNextLvBtn()
     {
         GameManager.Instance.stickyNoteManager.NextLevel();
+        GameManager.Instance.ChangeState(GameState.Tearing);
         GameManager.Instance.uiManager.NextLevelPanel.SetActive(false);
     }
 

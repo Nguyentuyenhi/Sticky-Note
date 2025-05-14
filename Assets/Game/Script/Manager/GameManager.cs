@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
 {
 
     public static GameManager Instance { get; private set; }
-    public int incomePerNote = 1;
+    public float incomePerNote;
     public GameState CurrentState { get; private set; }
 
     public StickyNoteManager stickyNoteManager;
@@ -32,7 +32,6 @@ public class GameManager : MonoBehaviour
     {
         ChangeState(GameState.Setup);
     }
-
 
     public void ChangeState(GameState newState)
     {

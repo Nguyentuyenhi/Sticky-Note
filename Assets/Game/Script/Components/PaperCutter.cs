@@ -18,7 +18,7 @@ public class PaperCutter : MonoBehaviour
 
     public void StartCut()
     {
-        targetPosition.position = GameManager.Instance.stickyNoteManager.basePos;
+        
         defaultPosition = gameObject.transform;
         if (isCutting) return;
 

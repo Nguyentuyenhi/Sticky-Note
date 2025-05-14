@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: Hands
   m_EditorClassIdentifier: 
   skillName: Hands
-  level: 1
+  level: 0
+  skillType: 2
   temporaryLevel: 0
   baseCost: 10
   costMultiplier: 1.5

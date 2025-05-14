@@ -10,9 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 47be9f90d6c69974fbbf45d93fd6dd94, type: 3}
-  m_Name: Reward_
+  m_Name: Reward_5
   m_EditorClassIdentifier: 
-  rewardName: 
+  rewardName: +5 Hands
   icon: {fileID: 0}
   description: 
-  countDownTimer: 0
+  countDownTimer: 8
+  count: 0

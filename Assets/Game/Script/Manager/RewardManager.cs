@@ -3,6 +3,7 @@ using System.Collections;
 
 public class RewardManager : MonoBehaviour
 {
+    public bool isSpeedUp = false;
     public void ApplyReward(RewardData reward)
     {
         switch (reward.rewardName)
@@ -10,7 +11,7 @@ public class RewardManager : MonoBehaviour
             case "+3 Income":
                 Debug.Log("Tăng income x3");
                 GameManager.Instance.skillManager.incomeSkill.temporaryLevel += 3;
-                GameManager.Instance.incomePerNote = 1 + GameManager.Instance.skillManager.incomeSkill.level + GameManager.Instance.skillManager.incomeSkill.temporaryLevel;
+                GameManager.Instance.incomePerNote =(GameManager.Instance.skillManager.incomeSkill.level + GameManager.Instance.skillManager.incomeSkill.temporaryLevel);
 
                 StartCoroutine(ReverseIncomeBuffAfterDelay(3, reward.countDownTimer));
                 break;
@@ -23,17 +24,20 @@ public class RewardManager : MonoBehaviour
                 StartCoroutine(ReverseHandsBuffAfterDelay(5, reward.countDownTimer));
                 break;
 
-            case "+2 Speed":
+            case "x2 Speed":
                 Debug.Log("Tăng tốc x2");
-                GameManager.Instance.skillManager.speedSkill.temporaryLevel += 2;
-                GameManager.Instance.armController.UpdateSpeedMultiplier(1f + 0.2f * (GameManager.Instance.skillManager.speedSkill.level + GameManager.Instance.skillManager.speedSkill.temporaryLevel));
-
-                StartCoroutine(ReverseSpeedBuffAfterDelay(2, reward.countDownTimer));
+                isSpeedUp = true;
+                GameManager.Instance.armController.UpdateSpeed(10);
+                StartCoroutine(ReverseSpeedBuffAfterDelay(5, reward.countDownTimer));
                 break;
 
             case "+1 Paper Cutter":
                 Debug.Log("Thêm dao cắt giấy");
                 GameManager.Instance.paperCutter.StartCut();
+                break;
+            case "Auto click":
+                Debug.Log("Auto click 30s");
+                GameManager.Instance.armController.UpdateSpeedAutoClick(30);
                 break;
 
             default:
@@ -46,7 +50,7 @@ public class RewardManager : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         GameManager.Instance.skillManager.incomeSkill.temporaryLevel = 0;
-        GameManager.Instance.incomePerNote = 1 + GameManager.Instance.skillManager.incomeSkill.level;
+        GameManager.Instance.incomePerNote = (GameManager.Instance.skillManager.incomeSkill.level + GameManager.Instance.skillManager.incomeSkill.temporaryLevel);
         Debug.Log("Income trở lại bình thường");
     }
 
@@ -58,13 +62,9 @@ public class RewardManager : MonoBehaviour
         GameManager.Instance.armController.SetHandCount(1 + GameManager.Instance.skillManager.handsSkill.level);
         Debug.Log("Số tay trở lại bình thường");
     }
-
     private IEnumerator ReverseSpeedBuffAfterDelay(int amount, float delay)
     {
         yield return new WaitForSeconds(delay);
-        GameManager.Instance.skillManager.speedSkill.temporaryLevel = 0;
-
-        GameManager.Instance.armController.UpdateSpeedMultiplier(1f + 0.2f * GameManager.Instance.skillManager.speedSkill.level);
-        Debug.Log("Tốc độ trở lại bình thường");
+        isSpeedUp = false;  
     }
 }

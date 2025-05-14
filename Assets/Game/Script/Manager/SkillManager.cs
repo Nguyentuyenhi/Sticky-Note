@@ -40,7 +40,7 @@ public class SkillManager : MonoBehaviour
 
     private void UpdateButtonColor(Button button, SkillData skill)
     {
-        bool canAfford = GameManager.Instance.uiManager.coin >= skill.GetCost(skill.level);
+        bool canAfford = GameManager.Instance.uiManager.coin >= skill.GetUpgradeCost(skill.skillType, skill.level);
         ColorBlock cb = button.colors;
         cb.normalColor = canAfford ? affordableColor : normalColor.normalColor;
         button.colors = cb;
@@ -51,7 +51,6 @@ public class SkillManager : MonoBehaviour
     }
     public void SkillReset()
     {
-        Debug.Log("hihih");
         incomeSkill.level = 0;
         handsSkill.level = 0;
         speedSkill.level = 0;
@@ -60,7 +59,7 @@ public class SkillManager : MonoBehaviour
     }
     public void UpgradeSkill(SkillData skill)
     {
-        int cost = skill.GetCost(skill.level);
+        float cost = skill.GetUpgradeCost(skill.skillType, skill.level);
         if (GameManager.Instance.uiManager.coin >= cost)
         {
             GameManager.Instance.uiManager.SpendCoin(cost);
@@ -73,11 +72,11 @@ public class SkillManager : MonoBehaviour
     {
         if (skill == incomeSkill)
         {
-            GameManager.Instance.incomePerNote = 1 + incomeSkill.level + incomeSkill.temporaryLevel;
+            GameManager.Instance.incomePerNote =incomeSkill.level + incomeSkill.temporaryLevel;
         }
         else if (skill == speedSkill)
         {
-            GameManager.Instance.armController.UpdateSpeedMultiplier(1f + 0.2f * (speedSkill.level + speedSkill.temporaryLevel));
+            GameManager.Instance.armController.UpdateSpeedMultiplier(speedSkill.level + speedSkill.temporaryLevel);
         }
         else if (skill == handsSkill)
         {
@@ -91,8 +90,8 @@ public class SkillManager : MonoBehaviour
         speedSkillLv.text = $"Level: {speedSkill.level}";
         handSkillLv.text = $"Level: {handsSkill.level}";
 
-        incomeSkillLvPrice.text = $"${incomeSkill.GetCost(incomeSkill.level)}";
-        speedSkillLvPrice.text = $"${speedSkill.GetCost(speedSkill.level)}";
-        handSkillLvPrice.text = $"${handsSkill.GetCost(handsSkill.level)}";
+        incomeSkillLvPrice.text = $"${incomeSkill.GetUpgradeCost(incomeSkill.skillType,incomeSkill.level)}";
+        speedSkillLvPrice.text = $"${speedSkill.GetUpgradeCost( speedSkill.skillType,speedSkill.level)}";
+        handSkillLvPrice.text = $"${handsSkill.GetUpgradeCost(handsSkill.skillType, handsSkill.level)}";
     }
 }

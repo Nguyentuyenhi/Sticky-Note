@@ -6,7 +6,7 @@ using UnityEngine;
 public class StickyNoteManager : MonoBehaviour
 {
     [SerializeField] private StickyNote stickyNotePrefab;
-    [SerializeField] private int noteCount = 100;
+    [SerializeField] public int noteCount;
     [SerializeField] private Transform spawnParent;
     [SerializeField] private List<StickyNoteLevelData> levels;
     [SerializeField] public Vector3 basePos, offset;
@@ -46,7 +46,21 @@ public class StickyNoteManager : MonoBehaviour
             ShowNextLVPanel();
         }
     }
+    /*public Transform GetPlayerWithHighestID()
+    {
+        Player[] players = FindObjectsOfType<Player>();
+        Player highestIDPlayer = players[0];
 
+        foreach (Player player in players)
+        {
+            if (player.ID > highestIDPlayer.ID)
+            {
+                highestIDPlayer = player;
+            }
+        }
+
+        return highestIDPlayer.transform;
+    }*/
 
 
     public bool HasNotes() => notes.Count > 0;
@@ -67,18 +81,18 @@ public class StickyNoteManager : MonoBehaviour
 
     public void ShowNextLVPanel()
     {
+        nextLV?.Invoke();
         GameManager.Instance.uiManager.NextLevelPanel.SetActive(true);
     }
     public void NextLevel()
     {
         currentLevel += 1;
         StartLevel(currentLevel);
-        nextLV?.Invoke();
     }
     public void SetupFromLevelData(StickyNoteLevelData levelData)
     {
         this.currentLevelData = levelData;
-        noteCount = levelData.noteCount;
+        noteCount = levelData.TotalNoteCount;
         notes.Clear();
 
         // Xóa note cũ nếu có
@@ -86,17 +100,38 @@ public class StickyNoteManager : MonoBehaviour
             Destroy(child.gameObject);
     }
 
-    public  void CreateStickyNotes()
+    public void CreateStickyNotes()
     {
+        
+        int noteIndex = 0;
+        int entryIndex = 0;
+        int currentCount = 0;
+
         for (int i = 0; i < noteCount; i++)
         {
-            var pos = basePos + i * offset;
-            var prefab = currentLevelData.possibleNotePrefabs[ UnityEngine.Random.Range(0, currentLevelData.possibleNotePrefabs.Count)];
-            var note = Instantiate(prefab, pos, Quaternion.identity, spawnParent);
-            note.Setup(i);
+            StickyNoteEntry entry = currentLevelData.noteEntries[entryIndex];
+
+            Vector3 pos = basePos + i * offset * 2;
+
+            // Tạo giấy
+            StickyNote note = Instantiate(entry.prefab, pos, Quaternion.identity, spawnParent);
+            note.Setup(noteIndex);
             notes.Push(note);
+            noteIndex++;
+
+            currentCount++;
+
+            if (currentCount >= entry.count)
+            {
+                entryIndex++;
+                currentCount = 0;
+
+                if (entryIndex >= currentLevelData.noteEntries.Count)
+                    break;
+            }
         }
     }
+
     public void PushNoteBack(StickyNote note)
     {
         notes.Push(note);

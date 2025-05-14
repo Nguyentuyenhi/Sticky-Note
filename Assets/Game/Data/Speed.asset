@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7798f296d16f4ff4d84411d6c38d8cf2, type: 3}
   m_Name: Speed
   m_EditorClassIdentifier: 
-  skillName: speed
+  skillName: Speed
   level: 1
+  skillType: 1
   temporaryLevel: 0
   baseCost: 10
   costMultiplier: 1.5

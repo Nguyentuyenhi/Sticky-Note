@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 629549ed239eafc49a0f58f4712d8a40, type: 3}
   m_Name: Lv2
   m_EditorClassIdentifier: 
-  noteCount: 40
-  possibleNotePrefabs:
-  - {fileID: 8875547344666312934, guid: ec3014ca189454a4fb32fb7f8cbadef3, type: 3}
-  - {fileID: 6615591697443416087, guid: 9405d93c591e70345a34783e5d3a4fca, type: 3}
+  noteEntries:
+  - prefab: {fileID: 8875547344666312934, guid: ec3014ca189454a4fb32fb7f8cbadef3, type: 3}
+    count: 20
+  - prefab: {fileID: 6615591697443416087, guid: 9405d93c591e70345a34783e5d3a4fca, type: 3}
+    count: 20
