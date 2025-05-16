@@ -13,6 +13,19 @@ MonoBehaviour:
   m_Name: Lv1
   m_EditorClassIdentifier: 
   noteEntries:
-  - prefab: {fileID: 8875547344666312934, guid: ec3014ca189454a4fb32fb7f8cbadef3, type: 3}
-    count: 50
-  statuePrefab: {fileID: 0}
+  - prefab: {fileID: -7472329964474372387, guid: 250d915b4fd10dd46861156be7e635b0, type: 3}
+    count: 20
+  - prefab: {fileID: 9172639106480847831, guid: 14bfb803839180246bf3e695ab9e3f6f, type: 3}
+    count: 20
+  - prefab: {fileID: 1100568135691770578, guid: 5578dfecc2c3b344e8baee81b16bdd1f, type: 3}
+    count: 10
+  - prefab: {fileID: 4625946376549882123, guid: 1133385017f98f84a83f36bade397bd8, type: 3}
+    count: 10
+  - prefab: {fileID: 6889285317196616795, guid: 58e18006d25915d42bde3584f2d2e506, type: 3}
+    count: 10
+  - prefab: {fileID: 1462381926018766462, guid: af4dcf8f73585d344bbd5bf1e8f185af, type: 3}
+    count: 10
+  - prefab: {fileID: 699299002460623307, guid: 128bde5493cd1e540aa3a9695759a80a, type: 3}
+    count: 20
+  statuePrefab: {fileID: 6174702117061763730, guid: b926ffb6fe78c554b8eae9d82b7fd507, type: 3}
+  realNote: 1500

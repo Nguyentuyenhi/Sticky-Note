@@ -19,3 +19,5 @@ MonoBehaviour:
     count: 30
   - prefab: {fileID: 66686988221151879, guid: 4085373aa72e803499ba057b3593c10b, type: 3}
     count: 30
+  statuePrefab: {fileID: 6174702117061763730, guid: b926ffb6fe78c554b8eae9d82b7fd507, type: 3}
+  realNote: 9000

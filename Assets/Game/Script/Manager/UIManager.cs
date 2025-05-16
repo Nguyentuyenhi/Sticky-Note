@@ -40,11 +40,12 @@ public class UIManager : MonoBehaviour
         UpdateCoinText(coin);
         autoAddCoinCoroutine = null;
         GameManager.Instance.incomePerNote = 0;
+        NextLevelPanel.SetActive(true);
     }
 
     public void UpdateCoinText(float coin)
     {
-        coinText.text = "Coin: " + coin;
+        coinText.text = coin.ToString("F1");
     }
 
     public void OnClick()
@@ -54,7 +55,7 @@ public class UIManager : MonoBehaviour
 
     private void StartTearing()
     {
-        StartCoroutine(GameManager.Instance.rewardButtonSpawner.SpawnRoutine());
+        GameManager.Instance.rewardButtonSpawner.StartSpawn();
         GameManager.Instance.ChangeState(GameState.Tearing);
         SkillUI.SetActive(true);
         gameObject.transform.GetComponentInChildren<Button>().gameObject.SetActive(false);

@@ -1,6 +1,7 @@
 ﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static SkillData;
 
 public class SkillManager : MonoBehaviour
 {
@@ -18,12 +19,15 @@ public class SkillManager : MonoBehaviour
     [SerializeField] private Button handsButton;
     [SerializeField] private ColorBlock normalColor;
     [SerializeField] private Color affordableColor;
+    [SerializeField] private Sprite normalImage;
+    [SerializeField] private Sprite affordableImage;
 
     private void Start()
     {
         StartReset();
         normalColor = incomeButton.colors;
         affordableColor =new Color(0.6f, 0.8f, 1f);
+        normalImage = incomeButton.GetComponent<Image>().sprite;
 
         UpdateText();
         incomeButton.onClick.AddListener(() => UpgradeSkill(incomeSkill));
@@ -33,17 +37,18 @@ public class SkillManager : MonoBehaviour
     }
     private void Update()
     {
-        UpdateButtonColor(incomeButton, incomeSkill);
-        UpdateButtonColor(speedButton, speedSkill);
-        UpdateButtonColor(handsButton, handsSkill);
     }
 
-    private void UpdateButtonColor(Button button, SkillData skill)
+    private void ImageBtn(Button button, SkillData skill)
     {
         bool canAfford = GameManager.Instance.uiManager.coin >= skill.GetUpgradeCost(skill.skillType, skill.level);
-        ColorBlock cb = button.colors;
-        cb.normalColor = canAfford ? affordableColor : normalColor.normalColor;
-        button.colors = cb;
+        button.GetComponent<Image>().sprite = canAfford ? affordableImage : normalImage;
+    }
+    public void UpDateImageBtn()
+    {
+        ImageBtn(incomeButton, incomeSkill);
+        ImageBtn(speedButton, speedSkill);
+        ImageBtn(handsButton, handsSkill);
     }
     public void StartReset()
     {
@@ -59,7 +64,9 @@ public class SkillManager : MonoBehaviour
     }
     public void UpgradeSkill(SkillData skill)
     {
-        float cost = skill.GetUpgradeCost(skill.skillType, skill.level);
+        float cost = skill.GetRoundedUpgradeCost(skill.skillType, skill.level);
+
+        float roundedCost = Mathf.Round(cost * 10f) / 10f;
         if (GameManager.Instance.uiManager.coin >= cost)
         {
             GameManager.Instance.uiManager.SpendCoin(cost);
@@ -90,8 +97,8 @@ public class SkillManager : MonoBehaviour
         speedSkillLv.text = $"Level: {speedSkill.level}";
         handSkillLv.text = $"Level: {handsSkill.level}";
 
-        incomeSkillLvPrice.text = $"${incomeSkill.GetUpgradeCost(incomeSkill.skillType,incomeSkill.level)}";
-        speedSkillLvPrice.text = $"${speedSkill.GetUpgradeCost( speedSkill.skillType,speedSkill.level)}";
-        handSkillLvPrice.text = $"${handsSkill.GetUpgradeCost(handsSkill.skillType, handsSkill.level)}";
+        incomeSkillLvPrice.text = $"{incomeSkill.GetRoundedUpgradeCost(incomeSkill.skillType,incomeSkill.level)}";
+        speedSkillLvPrice.text = $"{speedSkill.GetRoundedUpgradeCost( speedSkill.skillType,speedSkill.level)}";
+        handSkillLvPrice.text = $"{handsSkill.GetRoundedUpgradeCost(handsSkill.skillType, handsSkill.level)}";
     }
 }

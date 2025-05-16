@@ -35,7 +35,15 @@ public class SkillData : ScriptableObject
                 Debug.LogWarning("Unknown skill type!");
                 return 0f;
         }
+
     }
+    public float GetRoundedUpgradeCost(SkillType skillType, int level)
+    {
+        float cost = GetUpgradeCost(skillType, level);
+        float roundedCost = Mathf.Round(cost * 10f) / 10f;
+        return roundedCost;
+    }
+
 
 
     public void LevelUp()

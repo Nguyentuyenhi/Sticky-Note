@@ -1,18 +1,23 @@
-﻿using System;
+﻿using DG.Tweening.Core.Easing;
+using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class StickyNoteManager : MonoBehaviour
 {
     [SerializeField] private StickyNote stickyNotePrefab;
     [SerializeField] public int noteCount;
     [SerializeField] private Transform spawnParent;
+    [SerializeField] private Transform statueSpawnerPoint;
+    [SerializeField] private Transform moneySpawnerPoint;
     [SerializeField] private List<StickyNoteLevelData> levels;
     [SerializeField] public Vector3 basePos, offset;
     public int currentLevel = 0;
     public Stack<StickyNote> notes = new Stack<StickyNote>();
     private StickyNoteLevelData currentLevelData;
+
     public Action nextLV;
     /* public void CreateStickyNotes()
      {
@@ -61,7 +66,12 @@ public class StickyNoteManager : MonoBehaviour
 
         return highestIDPlayer.transform;
     }*/
+    private Vector3 GetRandomSpawnPosition()
+    {
+        Vector2 randomOffset = Random.insideUnitCircle * 100;
 
+        return moneySpawnerPoint.position + new Vector3(randomOffset.x, 0f, randomOffset.y);
+    }
 
     public bool HasNotes() => notes.Count > 0;
 
@@ -77,17 +87,32 @@ public class StickyNoteManager : MonoBehaviour
         var levelData = levels[currentLevel];
         SetupFromLevelData(levelData);
        CreateStickyNotes();
+        GameObject statue = Instantiate(currentLevelData.statuePrefab, statueSpawnerPoint);
+        statue.transform.localPosition = Vector3.zero;
+        statue.transform.localRotation = Quaternion.identity;
     }
 
     public void ShowNextLVPanel()
     {
         nextLV?.Invoke();
-        GameManager.Instance.uiManager.NextLevelPanel.SetActive(true);
+    //    GameManager.Instance.uiManager.NextLevelPanel.SetActive(true);
+        GameManager.Instance.rewardButtonSpawner.SpawnStop();
     }
     public void NextLevel()
     {
+        GameManager.Instance.rewardButtonSpawner.StartSpawn();
+        //GameManager.Instance.rewardButtonSpawner.SpawnRoutine();
         currentLevel += 1;
         StartLevel(currentLevel);
+    }
+
+    public void MoneySpawner()
+    {
+        var money =GameManager.Instance.objectPooler.SpawnFromPool("MoneyFlying", GetRandomSpawnPosition(), Quaternion.identity);
+        
+        Debug.Log("hee");
+        money.GetComponent<MoneyFlying>().Flying();
+
     }
     public void SetupFromLevelData(StickyNoteLevelData levelData)
     {
@@ -114,7 +139,8 @@ public class StickyNoteManager : MonoBehaviour
             Vector3 pos = basePos + i * offset * 2;
 
             // Tạo giấy
-            StickyNote note = Instantiate(entry.prefab, pos, Quaternion.identity, spawnParent);
+            StickyNote note = Instantiate(entry.prefab, pos, entry.prefab.transform.rotation, spawnParent);
+
             note.Setup(noteIndex);
             notes.Push(note);
             noteIndex++;

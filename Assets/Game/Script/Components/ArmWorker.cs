@@ -9,26 +9,33 @@ public class ArmWorker : MonoBehaviour
     public Vector3 startPos;
     public Transform target;
     private StickyNoteManager noteManager;
-    public bool isBoosting =false;
-    public float baseSpeed;
-    private float boostTimer = 0f;
-    private float boostDuration = 1f;
     public StickyNote stickyNote;
     private Coroutine workRoutine;
+
+    public float baseSpeed;
     public float distance;
+
     private float boostMultiplier = 2f;
-    private float boostTimerActive = 0f;
+
+    // Buff trạng thái
+    private bool isBoosting = false;
+    private float boostTimer = 0f;
+
     private bool isSpeedBoostActive = false;
+    private float boostTimerActive = 0f;
+
     private void Start()
     {
         baseSpeed = speed;
         startPos = transform.position;
     }
+
     public void Init(Transform target, StickyNoteManager noteManager)
     {
         this.target = target;
         this.noteManager = noteManager;
     }
+
     public void StartAutoBoost(float duration)
     {
         RequestBoost(duration);
@@ -36,71 +43,72 @@ public class ArmWorker : MonoBehaviour
 
     public void RequestBoost(float duration)
     {
-        // Nếu boost đang hoạt động và còn thời gian dài hơn, không thay đổi
-        if ((isBoosting && boostTimer > duration) ) return;
+        // Nếu boost đang hoạt động và thời gian còn lại dài hơn thì bỏ qua
+        if (isBoosting && boostTimer > duration) return;
 
         isBoosting = true;
         boostTimer = duration;
-        speed *= 2;
 
-        Debug.Log($"Boost requested for {duration} seconds");
-    }
-    public void ActivateSpeedBoost( float duration)
-    {
-        if (!isSpeedBoostActive)
-        {
-            baseSpeed = speed;
-            speed  *=2;
-            boostTimerActive = duration;
-            isSpeedBoostActive = true;
-        }
-        else
-        {
-            // Nếu đang trong boost, reset lại thời gian
-            boostTimerActive = duration;
-        }
+        UpdateSpeed();
+        Debug.Log($"[ArmWorker] Auto Boost requested for {duration} seconds");
     }
 
-    private void ResetSpeed()
+    public void ActivateSpeedBoost(float duration)
     {
-        speed /= 2f;
+        boostTimerActive = duration;
+        isSpeedBoostActive = true;
+
+        UpdateSpeed();
+    }
+
+    private void ResetSpeedBoost()
+    {
         isSpeedBoostActive = false;
+        UpdateSpeed();
     }
 
-    private void EndBoost()
+    private void EndAutoBoost()
     {
-        speed = baseSpeed;
         isBoosting = false;
-        
+        UpdateSpeed();
+        Debug.Log("[ArmWorker] Auto Boost Ended");
+    }
 
-        Debug.Log("Auto Boost Ended!");
+    private void UpdateSpeed()
+    {
+        float finalMultiplier = 1f;
+
+        if (isBoosting) finalMultiplier *= boostMultiplier;
+        if (isSpeedBoostActive) finalMultiplier *= boostMultiplier;
+
+        speed = baseSpeed * finalMultiplier;
     }
 
     void Update()
     {
+        // Kiểm tra hết thời gian các buff
         if (isSpeedBoostActive)
         {
             boostTimerActive -= Time.deltaTime;
             if (boostTimerActive <= 0f)
             {
-                ResetSpeed();
+                ResetSpeedBoost();
             }
-        }
-        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
-        {
-            RequestBoost(boostDuration); // boostDuration = 1f
         }
 
         if (isBoosting)
         {
             boostTimer -= Time.deltaTime;
-
             if (boostTimer <= 0f)
             {
-                isBoosting = false;
-                speed = baseSpeed;
-                Debug.Log("Boost Ended");
+                EndAutoBoost();
             }
+        }
+
+        // Test click chuột để boost
+        if (Input.GetMouseButtonDown(0))
+        {
+            RequestBoost(1f); // boost 1 giây
         }
     }
 
@@ -111,7 +119,7 @@ public class ArmWorker : MonoBehaviour
             StopCoroutine(workRoutine);
             workRoutine = null;
 
-            if (stickyNote != null )
+            if (stickyNote != null)
             {
                 GameManager.Instance.stickyNoteManager.PushNoteBack(stickyNote);
             }
@@ -120,7 +128,6 @@ public class ArmWorker : MonoBehaviour
         }
     }
 
-
     public void StartWorkLoop(Action onDone)
     {
         workRoutine = StartCoroutine(WorkCoroutine(onDone));
@@ -128,7 +135,7 @@ public class ArmWorker : MonoBehaviour
 
     public void CalculateSpeedFor1NotePerSecond()
     {
-         distance = Vector3.Distance(startPos, target.position + new Vector3(0, 0.6f, 0));
+        distance = Vector3.Distance(startPos, target.position + new Vector3(0, 0.6f, 0));
         baseSpeed = distance / 0.45f;
         speed = baseSpeed;
     }
@@ -140,12 +147,9 @@ public class ArmWorker : MonoBehaviour
 
         baseSpeed = distance / moveTime;
 
-        speed = isBoosting ? baseSpeed * boostMultiplier : baseSpeed;
-      //  baseSpeed = speed;  
-        //speed = isSpeedBoostActive ? baseSpeed * boostMultiplier : baseSpeed;
+        // Tính lại speed theo các buff đang có
+        UpdateSpeed();
     }
-
-
 
     private IEnumerator WorkCoroutine(Action onDone)
     {
@@ -154,19 +158,19 @@ public class ArmWorker : MonoBehaviour
             // Di chuyển tới vị trí xé
             yield return MoveTo(target.position + new Vector3(0, 0.6f, 0));
 
-            // Xé giấy ngay lập tức
-            var note = GameManager.Instance.stickyNoteManager.PopNote();
-            if (note != null)
-            {
-                stickyNote = note;
-                note.Tear();
-                GameManager.Instance.uiManager.UpdateCoinValue();
-            }
+            // Xé giấy
+                var note = GameManager.Instance.stickyNoteManager.PopNote();
+                if (note != null)
+                {
+                    stickyNote = note;
+                    GameManager.Instance.uiManager.UpdateCoinValue();
+                    note.Tear();
+                }
 
-            // Di chuyển về vị trí ban đầu
+            // Quay lại vị trí ban đầu
             yield return MoveTo(startPos);
 
-            // Nghỉ 0.1s để tổng mỗi vòng đúng 1 giây
+            // Delay để đảm bảo mỗi vòng mất 1 giây
             yield return new WaitForSeconds(0.1f);
         }
 
@@ -182,6 +186,4 @@ public class ArmWorker : MonoBehaviour
             yield return null;
         }
     }
-
-    
 }

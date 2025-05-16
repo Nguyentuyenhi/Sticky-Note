@@ -13,6 +13,8 @@ public class StickyNote : MonoBehaviour
 
     public void Tear()
     {
+        GameManager.Instance.stickyNoteManager.MoneySpawner();
+        GameManager.Instance.skillManager.UpDateImageBtn();
         Vector3 targetPosition = transform.position + new Vector3(
            Random.Range(-2f,2f),   
             0f,   

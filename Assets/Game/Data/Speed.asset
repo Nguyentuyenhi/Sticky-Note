@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Speed
   m_EditorClassIdentifier: 
   skillName: Speed
-  level: 1
+  level: 0
   skillType: 1
   temporaryLevel: 0
   baseCost: 10

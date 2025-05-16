@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
     public float incomePerNote;
     public GameState CurrentState { get; private set; }
-
+    public ObjectPooler objectPooler;
     public StickyNoteManager stickyNoteManager;
     public ArmController armController;
     public UIManager uiManager;

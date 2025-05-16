@@ -6,6 +6,8 @@ public class StickyNoteLevelData : ScriptableObject
 {
     public List<StickyNoteEntry> noteEntries;
     public GameObject statuePrefab;
+    public int realNote;
+    public int index => realNote / 100;
 
     public int TotalNoteCount
     {
@@ -25,6 +27,6 @@ public class StickyNoteLevelData : ScriptableObject
 public class StickyNoteEntry
 {
     public StickyNote prefab;
-    public int count; // số lượng cần spawn cho prefab này
+    public int count; 
 }
 
